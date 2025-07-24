@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: todo-api
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpiration: 900 # 15m
+    refreshTokenExpiration: 86400 # 24 hours
+  profiles:
+    active: dev
