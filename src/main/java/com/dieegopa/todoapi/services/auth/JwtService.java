@@ -1,7 +1,7 @@
 package com.dieegopa.todoapi.services.auth;
 
 import com.dieegopa.todoapi.config.JwtConfig;
-import com.dieegopa.todoapi.dtos.Jwt;
+import com.dieegopa.todoapi.entities.Jwt;
 import com.dieegopa.todoapi.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

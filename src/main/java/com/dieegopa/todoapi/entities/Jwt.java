@@ -1,4 +1,4 @@
-package com.dieegopa.todoapi.dtos;
+package com.dieegopa.todoapi.entities;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

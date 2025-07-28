@@ -1,5 +1,6 @@
 package com.dieegopa.todoapi.dtos;
 
+import com.dieegopa.todoapi.entities.Jwt;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

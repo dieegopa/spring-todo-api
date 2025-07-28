@@ -1,6 +1,6 @@
 package com.dieegopa.todoapi.services.auth;
 
-import com.dieegopa.todoapi.dtos.Jwt;
+import com.dieegopa.todoapi.entities.Jwt;
 import com.dieegopa.todoapi.entities.User;
 
 public interface IJwtService {
