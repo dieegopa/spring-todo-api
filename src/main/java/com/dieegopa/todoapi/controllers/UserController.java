@@ -3,6 +3,7 @@ package com.dieegopa.todoapi.controllers;
 import com.dieegopa.todoapi.dtos.RegisterUserRequest;
 import com.dieegopa.todoapi.dtos.UserDto;
 import com.dieegopa.todoapi.services.user.IUserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,7 @@ public class UserController {
 
     @PostMapping("/register")
     public UserDto registerUser(
-            @RequestBody RegisterUserRequest request
+            @Valid @RequestBody RegisterUserRequest request
     ) {
         return userService.registerUser(request);
     }
