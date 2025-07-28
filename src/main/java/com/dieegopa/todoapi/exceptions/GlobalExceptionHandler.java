@@ -64,4 +64,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleTaskNotFound(TaskNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ErrorDto(e.getMessage())
+        );
+    }
+
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<ErrorDto> handleForbiddenAccess(ForbiddenAccessException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ErrorDto(e.getMessage())
+        );
+    }
 }

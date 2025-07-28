@@ -4,4 +4,5 @@ import com.dieegopa.todoapi.dtos.TaskDto;
 
 public interface ITaskService {
     Iterable<TaskDto> getAllTasks();
+    TaskDto getTaskById(long id);
 }
