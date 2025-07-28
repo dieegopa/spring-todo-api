@@ -10,6 +10,7 @@ public class TaskDto {
     private Long id;
     private String name;
     private String description;
+    private boolean completed;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDatetime;

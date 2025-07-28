@@ -1,10 +1,13 @@
 package com.dieegopa.todoapi.services.auth;
 
-import com.dieegopa.todoapi.entities.Jwt;
 import com.dieegopa.todoapi.dtos.LoginRequest;
 import com.dieegopa.todoapi.dtos.LoginResponse;
+import com.dieegopa.todoapi.entities.Jwt;
+import com.dieegopa.todoapi.entities.User;
 
 public interface IAuthService {
+
+    User getCurrentUser();
 
     LoginResponse login(LoginRequest request);
 

@@ -36,14 +36,18 @@ public class Task {
     @Column(name = "end_datetime")
     private LocalDateTime endDatetime;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "completed", nullable = false)
+    @ColumnDefault("false")
+    private boolean completed;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+    private LocalDateTime createdAt;
 
 }

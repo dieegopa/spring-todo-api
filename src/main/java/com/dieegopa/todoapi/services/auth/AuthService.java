@@ -3,11 +3,13 @@ package com.dieegopa.todoapi.services.auth;
 import com.dieegopa.todoapi.entities.Jwt;
 import com.dieegopa.todoapi.dtos.LoginRequest;
 import com.dieegopa.todoapi.dtos.LoginResponse;
+import com.dieegopa.todoapi.entities.User;
 import com.dieegopa.todoapi.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
@@ -17,6 +19,12 @@ public class AuthService implements IAuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final IJwtService jwtService;
+
+    public User getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (Long) authentication.getPrincipal();
+        return userRepository.findById(userId).orElse(null);
+    }
 
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(

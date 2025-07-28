@@ -19,7 +19,7 @@ public class TaskController {
 
     @GetMapping
     @Operation(summary = "Get all tasks",
-            description = "Retrieves a list of all tasks in the system."
+            description = "Retrieves a list of all tasks by the authenticated user."
     )
     public Iterable<TaskDto> getAllTasks() {
         return taskService.getAllTasks();

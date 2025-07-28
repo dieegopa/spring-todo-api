@@ -3,6 +3,7 @@ package com.dieegopa.todoapi.services.task;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.mappers.TaskMapper;
 import com.dieegopa.todoapi.repositories.TaskRepository;
+import com.dieegopa.todoapi.services.auth.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,13 @@ public class TaskService implements ITaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+    private final AuthService authService;
 
     @Override
     public Iterable<TaskDto> getAllTasks() {
-        return taskRepository.findAll()
+        var user = authService.getCurrentUser();
+
+        return taskRepository.getAllByUser(user)
                 .stream()
                 .map(taskMapper::toDto)
                 .toList();
