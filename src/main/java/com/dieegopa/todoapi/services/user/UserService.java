@@ -1,4 +1,4 @@
-package com.dieegopa.todoapi.services;
+package com.dieegopa.todoapi.services.user;
 
 import com.dieegopa.todoapi.dtos.RegisterUserRequest;
 import com.dieegopa.todoapi.dtos.UserDto;
