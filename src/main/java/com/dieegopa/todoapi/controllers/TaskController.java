@@ -37,4 +37,12 @@ public class TaskController {
     ) {
         return taskService.getTaskById(id);
     }
+
+    @GetMapping("/completed")
+    @Operation(summary = "Get completed tasks",
+            description = "Retrieves a list of completed tasks for the authenticated user."
+    )
+    public Iterable<TaskDto> getCompletedTasks() {
+        return taskService.getCompletedTasks();
+    }
 }

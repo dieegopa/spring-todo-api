@@ -40,4 +40,14 @@ public class TaskService implements ITaskService {
 
         return taskMapper.toDto(task);
     }
+
+    @Override
+    public Iterable<TaskDto> getCompletedTasks() {
+        var user = authService.getCurrentUser();
+
+        return taskRepository.getAllByUserAndCompleted(user, true)
+                .stream()
+                .map(taskMapper::toDto)
+                .toList();
+    }
 }

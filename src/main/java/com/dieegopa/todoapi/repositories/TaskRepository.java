@@ -12,4 +12,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("SELECT t FROM Task t WHERE t.user = :user")
     List<Task> getAllByUser(@Param("user") User user);
+
+    @Query("SELECT t FROM Task t WHERE t.user = :user AND t.completed = :completed")
+    List<Task> getAllByUserAndCompleted(User user, boolean completed);
 }
