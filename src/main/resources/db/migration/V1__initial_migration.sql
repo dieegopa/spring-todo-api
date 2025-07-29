@@ -5,7 +5,7 @@ CREATE TABLE users
     email      VARCHAR(255)                       NOT NULL,
     password   VARCHAR(255)                       NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    CONSTRAINT `PRIMARY_USERS` PRIMARY KEY (id)
 );
 
 CREATE TABLE tasks
@@ -18,6 +18,6 @@ CREATE TABLE tasks
     end_datetime   DATETIME NULL,
     completed      BOOLEAN  DEFAULT FALSE             NOT NULL,
     created_at     DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id),
+    CONSTRAINT `PRIMARY_TASKS` PRIMARY KEY (id),
     CONSTRAINT `FK_tasks_users` FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
