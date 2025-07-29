@@ -5,17 +5,17 @@ import com.dieegopa.todoapi.exceptions.TaskNotFoundException;
 import com.dieegopa.todoapi.exceptions.ForbiddenAccessException;
 import com.dieegopa.todoapi.mappers.TaskMapper;
 import com.dieegopa.todoapi.repositories.TaskRepository;
-import com.dieegopa.todoapi.services.auth.AuthService;
+import com.dieegopa.todoapi.services.auth.AuthServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class TaskService implements ITaskService {
+public class TaskServiceImpl implements ITaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
     @Override
     public Iterable<TaskDto> getAllTasks() {

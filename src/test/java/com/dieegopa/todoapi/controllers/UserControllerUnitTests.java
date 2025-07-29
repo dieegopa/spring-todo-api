@@ -1,19 +1,14 @@
-package com.dieegopa.todoapi.controller;
+package com.dieegopa.todoapi.controllers;
 
 import com.dieegopa.todoapi.BaseTest;
 import com.dieegopa.todoapi.dtos.RegisterUserRequest;
-import com.dieegopa.todoapi.entities.User;
 import com.dieegopa.todoapi.repositories.UserRepository;
-import com.dieegopa.todoapi.services.auth.IJwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -25,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerUnitTests extends BaseTest {
 
     @Autowired
@@ -33,25 +29,12 @@ public class UserControllerUnitTests extends BaseTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockitoBean
-    private IJwtService jwtService;
-
     @Autowired
     private ObjectMapper objectMapper;
 
-    User user;
-
-    @BeforeEach
-    public void setUp() {
-        user = User.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
-                .password(faker.internet().password())
-                .build();
-    }
-
     @Test
-    public void registerUserTest() throws Exception {
+    @Order(1)
+    public void testRegisterUser() throws Exception {
 
         var registerUserRequest = RegisterUserRequest.builder()
                 .name(user.getName())
@@ -78,6 +61,28 @@ public class UserControllerUnitTests extends BaseTest {
 
         Assertions.assertNotNull(user);
         Assertions.assertEquals(1, userRepository.count());
+    }
 
+    @Test
+    public void testRegisterUserWithExistingEmail() throws Exception {
+        var registerUserRequest = RegisterUserRequest.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .build();
+
+        mockMvc.perform(post("/api/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerUserRequest))
+        ).andExpect(status().isOk());
+
+        ResultActions response = mockMvc.perform(post("/api/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerUserRequest))
+        );
+
+        response.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("User already exists with the provided email.")));
     }
 }

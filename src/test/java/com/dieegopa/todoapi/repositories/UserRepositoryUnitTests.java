@@ -13,17 +13,6 @@ public class UserRepositoryUnitTests extends BaseTest {
     @Autowired
     private UserRepository userRepository;
 
-    User user;
-
-    @BeforeEach
-    public void setUp() {
-        user = User.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
-                .password(faker.internet().password())
-                .build();
-    }
-
     @Test
     @DisplayName("Test UserRepository save method")
     public void testSaveUser() {

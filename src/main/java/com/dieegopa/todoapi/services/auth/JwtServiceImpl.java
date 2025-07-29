@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Service
 @AllArgsConstructor
-public class JwtService implements IJwtService {
+public class JwtServiceImpl implements IJwtService {
 
     private final JwtConfig jwtConfig;
 
