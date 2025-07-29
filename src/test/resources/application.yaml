@@ -3,6 +3,10 @@ spring:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     username: sa
     password: password
+  jwt:
+    secret: 9cc8d20b047ce3925924c4dc23e203468da77fb4d67280ca418109360e59825f
+    accessTokenExpiration: 900 # 15m
+    refreshTokenExpiration: 86400 # 24 hours
   jpa:
     show-sql: false
     hibernate:

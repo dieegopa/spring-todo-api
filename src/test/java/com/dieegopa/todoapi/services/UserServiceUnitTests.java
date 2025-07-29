@@ -20,7 +20,7 @@ public class UserServiceUnitTests extends BaseTest {
 
         RegisterUserRequest registerUserRequest = RegisterUserRequest.builder()
                 .name(user.getName())
-                .email(user.getEmail())
+                .email(faker.internet().emailAddress())
                 .password(user.getPassword())
                 .build();
 
@@ -36,8 +36,6 @@ public class UserServiceUnitTests extends BaseTest {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();
-
-        userService.registerUser(registerUserRequest);
 
         Assertions.assertThrows(DuplicateUserException.class, () -> userService.registerUser(registerUserRequest));
     }

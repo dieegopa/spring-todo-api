@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,9 +37,11 @@ public class UserControllerUnitTests extends BaseTest {
     @Order(1)
     public void testRegisterUser() throws Exception {
 
+        String email = faker.internet().emailAddress();
+
         var registerUserRequest = RegisterUserRequest.builder()
                 .name(user.getName())
-                .email(user.getEmail())
+                .email(email)
                 .password(user.getPassword())
                 .build();
 
@@ -52,15 +55,15 @@ public class UserControllerUnitTests extends BaseTest {
                 .andExpect(jsonPath("$.name",
                         is(user.getName()))
                 ).andExpect(jsonPath("$.email",
-                        is(user.getEmail()))
+                        is(email))
                 ).andExpect(jsonPath("$.id",
-                        is(1)
+                        notNullValue()
                 ));
 
         user = userRepository.findByEmail(user.getEmail()).orElse(null);
 
         Assertions.assertNotNull(user);
-        Assertions.assertEquals(1, userRepository.count());
+        Assertions.assertEquals(2, userRepository.count());
     }
 
     @Test
@@ -70,11 +73,6 @@ public class UserControllerUnitTests extends BaseTest {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();
-
-        mockMvc.perform(post("/api/users/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerUserRequest))
-        ).andExpect(status().isOk());
 
         ResultActions response = mockMvc.perform(post("/api/users/register")
                 .contentType(MediaType.APPLICATION_JSON)

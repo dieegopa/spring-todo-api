@@ -78,11 +78,9 @@ public class UserRepositoryUnitTests extends BaseTest {
     @Test
     @DisplayName("Test UserRepository count method")
     public void testCount() {
-        long initialCount = userRepository.count();
-        userRepository.save(user);
-        long finalCount = userRepository.count();
+        long count = userRepository.count();
 
-        Assertions.assertEquals(initialCount + 1, finalCount);
+        Assertions.assertEquals(1, count);
     }
 
     @Test

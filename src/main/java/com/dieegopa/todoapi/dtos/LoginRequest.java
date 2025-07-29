@@ -15,4 +15,9 @@ public class LoginRequest {
     @NotNull(message = "Password cannot be null")
     @NotBlank(message = "Password cannot be blank")
     private String password;
+
+    public LoginRequest(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
