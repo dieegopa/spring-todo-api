@@ -4,10 +4,12 @@ import com.dieegopa.todoapi.BaseTest;
 import com.dieegopa.todoapi.dtos.RegisterUserRequest;
 import com.dieegopa.todoapi.exceptions.DuplicateUserException;
 import com.dieegopa.todoapi.services.user.IUserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class UserServiceUnitTests extends BaseTest {
@@ -26,7 +28,7 @@ public class UserServiceUnitTests extends BaseTest {
 
         var userDto = userService.registerUser(registerUserRequest);
 
-        Assertions.assertNotNull(userDto);
+        assertNotNull(userDto);
     }
 
     @Test
@@ -37,6 +39,6 @@ public class UserServiceUnitTests extends BaseTest {
                 .password(user.getPassword())
                 .build();
 
-        Assertions.assertThrows(DuplicateUserException.class, () -> userService.registerUser(registerUserRequest));
+        assertThrows(DuplicateUserException.class, () -> userService.registerUser(registerUserRequest));
     }
 }

@@ -1,22 +1,14 @@
 package com.dieegopa.todoapi;
 
-import com.dieegopa.todoapi.dtos.LoginRequest;
 import com.dieegopa.todoapi.entities.User;
 import com.dieegopa.todoapi.repositories.UserRepository;
-import com.dieegopa.todoapi.services.auth.IJwtService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public class BaseTest {
+public class BaseJpaTest {
 
     public Faker faker;
 
@@ -24,13 +16,6 @@ public class BaseTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private IJwtService jwtService;
-
-    public LoginRequest loginRequest;
-
-    public String token;
 
     @BeforeEach
     public void setUp() {
@@ -50,19 +35,6 @@ public class BaseTest {
             user = userRepository.findByEmail("first@gmail.com").orElse(null);
         }
 
-        loginRequest = new LoginRequest("first@gmail.com", "password1234");
-
-        token = "Bearer " + jwtService.generateAccessToken(user).toString();
-
-    }
-
-    public void mockSecurityContext() {
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn(user.getId());
-
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
     }
 
 }

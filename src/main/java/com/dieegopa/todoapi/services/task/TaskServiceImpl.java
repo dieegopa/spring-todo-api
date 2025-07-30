@@ -34,7 +34,7 @@ public class TaskServiceImpl implements ITaskService {
                 TaskNotFoundException::new
         );
 
-        if (!task.getUser().equals(user)) {
+        if (!task.getUser().getId().equals(user.getId())) {
             throw new ForbiddenAccessException();
         }
 

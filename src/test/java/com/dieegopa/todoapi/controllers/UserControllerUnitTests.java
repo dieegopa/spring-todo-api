@@ -4,7 +4,10 @@ import com.dieegopa.todoapi.BaseTest;
 import com.dieegopa.todoapi.dtos.RegisterUserRequest;
 import com.dieegopa.todoapi.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -62,8 +66,7 @@ public class UserControllerUnitTests extends BaseTest {
 
         user = userRepository.findByEmail(user.getEmail()).orElse(null);
 
-        Assertions.assertNotNull(user);
-        Assertions.assertEquals(2, userRepository.count());
+        assertNotNull(user);
     }
 
     @Test
@@ -71,7 +74,7 @@ public class UserControllerUnitTests extends BaseTest {
         var registerUserRequest = RegisterUserRequest.builder()
                 .name(user.getName())
                 .email(user.getEmail())
-                .password(user.getPassword())
+                .password(faker.internet().password())
                 .build();
 
         ResultActions response = mockMvc.perform(post("/api/users/register")

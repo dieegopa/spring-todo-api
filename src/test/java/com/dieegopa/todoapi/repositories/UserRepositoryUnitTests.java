@@ -1,14 +1,19 @@
 package com.dieegopa.todoapi.repositories;
 
-import com.dieegopa.todoapi.BaseTest;
+import com.dieegopa.todoapi.BaseJpaTest;
 import com.dieegopa.todoapi.entities.User;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserRepositoryUnitTests extends BaseTest {
+public class UserRepositoryUnitTests extends BaseJpaTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -18,7 +23,7 @@ public class UserRepositoryUnitTests extends BaseTest {
     public void testSaveUser() {
         userRepository.save(user);
 
-        Assertions.assertNotNull(user.getId());
+        assertNotNull(user.getId());
     }
 
     @Test
@@ -33,9 +38,9 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.save(user);
         User foundUser = userRepository.findByEmail(email).orElse(null);
 
-        Assertions.assertNotNull(foundUser);
-        Assertions.assertEquals(name, foundUser.getName());
-        Assertions.assertEquals(email, foundUser.getEmail());
+        assertNotNull(foundUser);
+        assertEquals(name, foundUser.getName());
+        assertEquals(email, foundUser.getEmail());
     }
 
     @Test
@@ -48,7 +53,7 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.save(user);
 
         boolean exists = userRepository.existsByEmail(email);
-        Assertions.assertTrue(exists);
+        assertTrue(exists);
     }
 
     @Test
@@ -57,10 +62,10 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.save(user);
         User foundUser = userRepository.findById(user.getId()).orElse(null);
 
-        Assertions.assertNotNull(foundUser);
-        Assertions.assertEquals(user.getId(), foundUser.getId());
-        Assertions.assertEquals(user.getName(), foundUser.getName());
-        Assertions.assertEquals(user.getEmail(), foundUser.getEmail());
+        assertNotNull(foundUser);
+        assertEquals(user.getId(), foundUser.getId());
+        assertEquals(user.getName(), foundUser.getName());
+        assertEquals(user.getEmail(), foundUser.getEmail());
     }
 
     @Test
@@ -72,7 +77,7 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.deleteById(userId);
         User deletedUser = userRepository.findById(userId).orElse(null);
 
-        Assertions.assertNull(deletedUser);
+        assertNull(deletedUser);
     }
 
     @Test
@@ -80,7 +85,7 @@ public class UserRepositoryUnitTests extends BaseTest {
     public void testCount() {
         long count = userRepository.count();
 
-        Assertions.assertEquals(1, count);
+        assertEquals(1, count);
     }
 
     @Test
@@ -89,8 +94,8 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.save(user);
         var users = userRepository.findAll();
 
-        Assertions.assertFalse(users.isEmpty());
-        Assertions.assertTrue(users.stream().anyMatch(u -> u.getId().equals(user.getId())));
+        assertFalse(users.isEmpty());
+        assertTrue(users.stream().anyMatch(u -> u.getId().equals(user.getId())));
     }
 
     @Test
@@ -103,8 +108,8 @@ public class UserRepositoryUnitTests extends BaseTest {
         userRepository.save(user);
         User updatedUser = userRepository.findById(user.getId()).orElse(null);
 
-        Assertions.assertNotNull(updatedUser);
-        Assertions.assertEquals(updatedName, updatedUser.getName());
+        assertNotNull(updatedUser);
+        assertEquals(updatedName, updatedUser.getName());
     }
 
 }

@@ -3,8 +3,7 @@ package com.dieegopa.todoapi.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "tasks")
 public class Task {
     @Id
@@ -28,7 +30,6 @@ public class Task {
     @Column(name = "description")
     private String description;
 
-    @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "start_datetime", nullable = false)
     private LocalDateTime startDatetime;
@@ -45,7 +46,6 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
