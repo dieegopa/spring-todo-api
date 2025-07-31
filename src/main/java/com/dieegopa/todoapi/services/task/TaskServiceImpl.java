@@ -1,8 +1,8 @@
 package com.dieegopa.todoapi.services.task;
 
 import com.dieegopa.todoapi.dtos.TaskDto;
-import com.dieegopa.todoapi.exceptions.TaskNotFoundException;
 import com.dieegopa.todoapi.exceptions.ForbiddenAccessException;
+import com.dieegopa.todoapi.exceptions.TaskNotFoundException;
 import com.dieegopa.todoapi.mappers.TaskMapper;
 import com.dieegopa.todoapi.repositories.TaskRepository;
 import com.dieegopa.todoapi.services.auth.AuthServiceImpl;
@@ -46,6 +46,16 @@ public class TaskServiceImpl implements ITaskService {
         var user = authService.getCurrentUser();
 
         return taskRepository.getAllByUserAndCompleted(user, true)
+                .stream()
+                .map(taskMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public Iterable<TaskDto> getPendingTasks() {
+        var user = authService.getCurrentUser();
+
+        return taskRepository.getAllByUserAndCompleted(user, false)
                 .stream()
                 .map(taskMapper::toDto)
                 .toList();

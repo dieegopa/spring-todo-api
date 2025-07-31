@@ -45,4 +45,12 @@ public class TaskController {
     public Iterable<TaskDto> getCompletedTasks() {
         return taskService.getCompletedTasks();
     }
+
+    @GetMapping("/pending")
+    @Operation(summary = "Get pending tasks",
+            description = "Retrieves a list of pending tasks for the authenticated user."
+    )
+    public Iterable<TaskDto> getPendingTasks() {
+        return taskService.getPendingTasks();
+    }
 }

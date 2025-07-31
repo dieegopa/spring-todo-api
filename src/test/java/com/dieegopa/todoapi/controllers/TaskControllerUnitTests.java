@@ -320,4 +320,78 @@ public class TaskControllerUnitTests extends BaseTest {
         assertTrue(tasks.stream().anyMatch(TaskDto::isCompleted));
     }
 
+    @Test
+    @Order(12)
+    public void testGetPendingTasksUnauthenticated() throws Exception {
+        ResultActions response = mockMvc.perform(get("/api/tasks/pending"));
+
+        response.andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Order(13)
+    public void testGetPendingTasksEmpty() throws Exception {
+
+        taskRepository.deleteAll();
+
+        ResultActions response = mockMvc.perform(get("/api/tasks/pending")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andDo(print())
+                .andExpect(status().isOk());
+
+        List<TaskDto> tasks = objectMapper.readValue(
+                response.andReturn().getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, TaskDto.class)
+        );
+
+        assertTrue(tasks.isEmpty());
+    }
+
+    @Test
+    @Order(14)
+    public void testGetPendingTasksNotEmpty() throws Exception {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        taskRepository.save(task);
+
+        Task completedTask = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(true)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        taskRepository.save(completedTask);
+
+        ResultActions response = mockMvc.perform(get("/api/tasks/pending")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andDo(print())
+                .andExpect(status().isOk());
+
+        List<TaskDto> tasks = objectMapper.readValue(
+                response.andReturn().getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, TaskDto.class)
+        );
+
+        assertFalse(tasks.isEmpty());
+        assertTrue(tasks.stream().anyMatch(t -> t.getId().equals(task.getId())));
+        assertTrue(tasks.stream().anyMatch(t -> t.getName().equals(task.getName())));
+        assertTrue(tasks.stream().anyMatch(t -> t.getDescription().equals(task.getDescription())));
+        assertFalse(tasks.stream().anyMatch(TaskDto::isCompleted));
+    }
+
 }

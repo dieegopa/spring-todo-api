@@ -138,4 +138,32 @@ public class TaskServiceUnitTests extends BaseTest {
         assertTrue(completedTasks.stream().anyMatch(t -> t.getName().equals(task1.getName())));
         assertFalse(completedTasks.stream().anyMatch(t -> t.getName().equals(task2.getName())));
     }
+
+    @Test
+    public void testGetPendingTasks() {
+        Task task1 = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(user)
+                .build();
+
+        Task task2 = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(true)
+                .user(user)
+                .build();
+
+        taskRepository.save(task1);
+        taskRepository.save(task2);
+
+        List<TaskDto> pendingTasks = (List<TaskDto>) taskService.getPendingTasks();
+
+        assertFalse(pendingTasks.isEmpty());
+        assertTrue(pendingTasks.stream().anyMatch(t -> t.getName().equals(task1.getName())));
+        assertFalse(pendingTasks.stream().anyMatch(t -> t.getName().equals(task2.getName())));
+    }
 }

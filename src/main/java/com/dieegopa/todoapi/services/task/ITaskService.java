@@ -8,4 +8,6 @@ public interface ITaskService {
     TaskDto getTaskById(long id);
 
     Iterable<TaskDto> getCompletedTasks();
+
+    Iterable<TaskDto> getPendingTasks();
 }
