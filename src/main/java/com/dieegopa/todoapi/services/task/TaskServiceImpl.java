@@ -1,5 +1,6 @@
 package com.dieegopa.todoapi.services.task;
 
+import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.exceptions.ForbiddenAccessException;
 import com.dieegopa.todoapi.exceptions.TaskNotFoundException;
@@ -59,5 +60,15 @@ public class TaskServiceImpl implements ITaskService {
                 .stream()
                 .map(taskMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public TaskDto createTask(CreateTaskRequest request) {
+        var user = authService.getCurrentUser();
+        var task = taskMapper.toEntity(request);
+        task.setUser(user);
+
+        var savedTask = taskRepository.save(task);
+        return taskMapper.toDto(savedTask);
     }
 }

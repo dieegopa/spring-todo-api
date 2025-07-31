@@ -1,15 +1,14 @@
 package com.dieegopa.todoapi.controllers;
 
+import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.services.task.ITaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -32,7 +31,7 @@ public class TaskController {
             description = "Retrieves a specific task by its ID for the authenticated user."
     )
     public TaskDto getTaskById(
-            @Parameter(description = "ID of the task to retrieve",required = true)
+            @Parameter(description = "ID of the task to retrieve", required = true)
             @PathVariable long id
     ) {
         return taskService.getTaskById(id);
@@ -52,5 +51,13 @@ public class TaskController {
     )
     public Iterable<TaskDto> getPendingTasks() {
         return taskService.getPendingTasks();
+    }
+
+    @PostMapping
+    @Operation(summary = "Create a new task",
+            description = "Creates a new task for the authenticated user."
+    )
+    public TaskDto createTask(@Valid @RequestBody CreateTaskRequest request) {
+        return taskService.createTask(request);
     }
 }

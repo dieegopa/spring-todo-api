@@ -1,6 +1,7 @@
 package com.dieegopa.todoapi.controllers;
 
 import com.dieegopa.todoapi.BaseTest;
+import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.entities.Task;
 import com.dieegopa.todoapi.entities.User;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -392,6 +394,74 @@ public class TaskControllerUnitTests extends BaseTest {
         assertTrue(tasks.stream().anyMatch(t -> t.getName().equals(task.getName())));
         assertTrue(tasks.stream().anyMatch(t -> t.getDescription().equals(task.getDescription())));
         assertFalse(tasks.stream().anyMatch(TaskDto::isCompleted));
+    }
+
+    @Test
+    @Order(15)
+    public void testCreateTaskUnauthenticated() throws Exception {
+        CreateTaskRequest task = CreateTaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .build();
+
+        ResultActions response = mockMvc.perform(post("/api/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(task)));
+
+        response.andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Order(16)
+    public void testCreateTaskInvalidRequest() throws Exception {
+        CreateTaskRequest task = CreateTaskRequest.builder()
+                .name("")
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .build();
+
+        ResultActions response = mockMvc.perform(post("/api/tasks")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(task)));
+
+        response.andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Order(17)
+    public void testCreateTaskValidRequest() throws Exception {
+        CreateTaskRequest task = CreateTaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                .endDatetime(LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.SECONDS))
+                .build();
+
+        ResultActions response = mockMvc.perform(post("/api/tasks")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(task)));
+
+        response.andDo(print())
+                .andExpect(status().isOk());
+
+        TaskDto createdTask = objectMapper.readValue(
+                response.andReturn().getResponse().getContentAsString(),
+                TaskDto.class
+        );
+
+        assertNotNull(createdTask);
+        assertNotNull(createdTask.getId());
+        assertEquals(task.getName(), createdTask.getName());
+        assertEquals(task.getDescription(), createdTask.getDescription());
+        assertEquals(task.getStartDatetime().truncatedTo(ChronoUnit.SECONDS), createdTask.getStartDatetime());
     }
 
 }

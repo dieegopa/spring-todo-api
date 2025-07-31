@@ -1,6 +1,7 @@
 package com.dieegopa.todoapi.services;
 
 import com.dieegopa.todoapi.BaseTest;
+import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.entities.Task;
 import com.dieegopa.todoapi.entities.User;
@@ -165,5 +166,23 @@ public class TaskServiceUnitTests extends BaseTest {
         assertFalse(pendingTasks.isEmpty());
         assertTrue(pendingTasks.stream().anyMatch(t -> t.getName().equals(task1.getName())));
         assertFalse(pendingTasks.stream().anyMatch(t -> t.getName().equals(task2.getName())));
+    }
+
+    @Test
+    public void testCreateTask() {
+        CreateTaskRequest newTask = CreateTaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .build();
+
+        TaskDto createdTask = taskService.createTask(newTask);
+
+        assertNotNull(createdTask);
+        assertEquals(newTask.getName(), createdTask.getName());
+        assertEquals(newTask.getDescription(), createdTask.getDescription());
+        assertEquals(newTask.getStartDatetime(), createdTask.getStartDatetime());
+        assertFalse(createdTask.isCompleted());
     }
 }
