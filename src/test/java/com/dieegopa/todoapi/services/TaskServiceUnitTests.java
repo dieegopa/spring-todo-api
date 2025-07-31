@@ -185,4 +185,51 @@ public class TaskServiceUnitTests extends BaseTest {
         assertEquals(newTask.getStartDatetime(), createdTask.getStartDatetime());
         assertFalse(createdTask.isCompleted());
     }
+
+    @Test
+    public void testDeleteTask() {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(user)
+                .build();
+
+        taskRepository.save(task);
+
+        taskService.deleteTask(task.getId());
+
+        assertThrows(TaskNotFoundException.class, () -> taskService.getTaskById(task.getId()));
+    }
+
+    @Test
+    public void testDeleteTaskForbiddenAccess() {
+        User otherUser = User.builder()
+                .name(faker.name().fullName())
+                .email(faker.internet().emailAddress())
+                .password(faker.internet().password())
+                .build();
+
+        userRepository.save(otherUser);
+
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(otherUser)
+                .build();
+
+        taskRepository.save(task);
+
+        assertThrows(ForbiddenAccessException.class, () -> taskService.deleteTask(task.getId()));
+    }
+
+    @Test
+    public void testDeleteTaskNotFound() {
+        long nonExistentTaskId = 9999L;
+
+        assertThrows(TaskNotFoundException.class, () -> taskService.deleteTask(nonExistentTaskId));
+    }
 }

@@ -13,4 +13,6 @@ public interface ITaskService {
     Iterable<TaskDto> getPendingTasks();
 
     TaskDto createTask(CreateTaskRequest request);
+
+    void deleteTask(Long id);
 }

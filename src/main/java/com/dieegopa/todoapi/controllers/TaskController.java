@@ -60,4 +60,15 @@ public class TaskController {
     public TaskDto createTask(@Valid @RequestBody CreateTaskRequest request) {
         return taskService.createTask(request);
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a task",
+            description = "Deletes a specific task by its ID for the authenticated user."
+    )
+    public void deleteTask(
+            @Parameter(description = "ID of the task to delete", required = true)
+            @PathVariable long id
+    ) {
+        taskService.deleteTask(id);
+    }
 }

@@ -24,8 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -462,6 +461,93 @@ public class TaskControllerUnitTests extends BaseTest {
         assertEquals(task.getName(), createdTask.getName());
         assertEquals(task.getDescription(), createdTask.getDescription());
         assertEquals(task.getStartDatetime().truncatedTo(ChronoUnit.SECONDS), createdTask.getStartDatetime());
+    }
+
+    @Test
+    @Order(18)
+    public void testDeleteTaskUnauthenticated() throws Exception {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        task = taskRepository.save(task);
+
+        ResultActions response = mockMvc.perform(delete("/api/tasks/{id}", task.getId()));
+
+        response.andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Order(19)
+    public void testDeleteTaskNotFound() throws Exception {
+        long nonExistentTaskId = 999L;
+
+        ResultActions response = mockMvc.perform(delete("/api/tasks/{id}", nonExistentTaskId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(20)
+    public void testDeleteTaskForbidden() throws Exception {
+        User otherUser = User.builder()
+                .name(faker.name().fullName())
+                .email(faker.internet().emailAddress())
+                .password(faker.internet().password())
+                .build();
+
+        otherUser = userRepository.save(otherUser);
+
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(otherUser)
+                .build();
+
+        task = taskRepository.save(task);
+
+        ResultActions response = mockMvc.perform(delete("/api/tasks/{id}", task.getId())
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(21)
+    public void testDeleteTask() throws Exception {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        taskRepository.save(task);
+
+        ResultActions response = mockMvc.perform(delete("/api/tasks/{id}", task.getId())
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        response.andDo(print())
+                .andExpect(status().isOk());
+
+        assertThrows(Exception.class, () -> taskRepository.findById(task.getId()).orElseThrow());
     }
 
 }

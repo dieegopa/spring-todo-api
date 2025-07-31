@@ -71,4 +71,18 @@ public class TaskServiceImpl implements ITaskService {
         var savedTask = taskRepository.save(task);
         return taskMapper.toDto(savedTask);
     }
+
+    @Override
+    public void deleteTask(Long id) {
+        var user = authService.getCurrentUser();
+        var task = taskRepository.findById(id).orElseThrow(
+                TaskNotFoundException::new
+        );
+
+        if (!task.getUser().getId().equals(user.getId())) {
+            throw new ForbiddenAccessException();
+        }
+
+        taskRepository.delete(task);
+    }
 }
