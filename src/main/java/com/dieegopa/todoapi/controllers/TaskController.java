@@ -1,7 +1,7 @@
 package com.dieegopa.todoapi.controllers;
 
-import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
+import com.dieegopa.todoapi.dtos.TaskRequest;
 import com.dieegopa.todoapi.services.task.ITaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,8 +57,20 @@ public class TaskController {
     @Operation(summary = "Create a new task",
             description = "Creates a new task for the authenticated user."
     )
-    public TaskDto createTask(@Valid @RequestBody CreateTaskRequest request) {
+    public TaskDto createTask(@Valid @RequestBody TaskRequest request) {
         return taskService.createTask(request);
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Update a task",
+            description = "Updates an existing task by its ID for the authenticated user."
+    )
+    public TaskDto updateTask(
+            @Parameter(description = "ID of the task to update", required = true)
+            @PathVariable long id,
+            @Valid @RequestBody TaskRequest request
+    ) {
+        return taskService.updateTask(id, request);
     }
 
     @DeleteMapping("/{id}")

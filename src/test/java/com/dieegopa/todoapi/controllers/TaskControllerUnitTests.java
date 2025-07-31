@@ -1,8 +1,8 @@
 package com.dieegopa.todoapi.controllers;
 
 import com.dieegopa.todoapi.BaseTest;
-import com.dieegopa.todoapi.dtos.CreateTaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
+import com.dieegopa.todoapi.dtos.TaskRequest;
 import com.dieegopa.todoapi.entities.Task;
 import com.dieegopa.todoapi.entities.User;
 import com.dieegopa.todoapi.repositories.TaskRepository;
@@ -398,7 +398,7 @@ public class TaskControllerUnitTests extends BaseTest {
     @Test
     @Order(15)
     public void testCreateTaskUnauthenticated() throws Exception {
-        CreateTaskRequest task = CreateTaskRequest.builder()
+        TaskRequest task = TaskRequest.builder()
                 .name(faker.lorem().word())
                 .description(faker.lorem().sentence())
                 .completed(false)
@@ -416,7 +416,7 @@ public class TaskControllerUnitTests extends BaseTest {
     @Test
     @Order(16)
     public void testCreateTaskInvalidRequest() throws Exception {
-        CreateTaskRequest task = CreateTaskRequest.builder()
+        TaskRequest task = TaskRequest.builder()
                 .name("")
                 .description(faker.lorem().sentence())
                 .completed(false)
@@ -435,7 +435,7 @@ public class TaskControllerUnitTests extends BaseTest {
     @Test
     @Order(17)
     public void testCreateTaskValidRequest() throws Exception {
-        CreateTaskRequest task = CreateTaskRequest.builder()
+        TaskRequest task = TaskRequest.builder()
                 .name(faker.lorem().word())
                 .description(faker.lorem().sentence())
                 .completed(false)
@@ -465,6 +465,133 @@ public class TaskControllerUnitTests extends BaseTest {
 
     @Test
     @Order(18)
+    public void testUpdateTaskUnauthenticated() throws Exception {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        task = taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(true)
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        ResultActions response = mockMvc.perform(patch("/api/tasks/{id}", task.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)));
+
+        response.andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Order(19)
+    public void testUpdateTaskNotFound() throws Exception {
+        long nonExistentTaskId = 999L;
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(true)
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        ResultActions response = mockMvc.perform(patch("/api/tasks/{id}", nonExistentTaskId)
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)));
+
+        response.andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Order(20)
+    public void testUpdateTaskForbidden() throws Exception {
+        User otherUser = User.builder()
+                .name(faker.name().fullName())
+                .email(faker.internet().emailAddress())
+                .password(faker.internet().password())
+                .build();
+
+        otherUser = userRepository.save(otherUser);
+
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(otherUser)
+                .build();
+
+        task = taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(true)
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        ResultActions response = mockMvc.perform(patch("/api/tasks/{id}", task.getId())
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)));
+
+        response.andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(21)
+    public void testUpdateTask() throws Exception {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(false)
+                .startDatetime(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        task = taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().sentence())
+                .completed(true)
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        ResultActions response = mockMvc.perform(patch("/api/tasks/{id}", task.getId())
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)));
+
+        response.andDo(print())
+                .andExpect(status().isOk());
+
+        TaskDto updatedTask = objectMapper.readValue(
+                response.andReturn().getResponse().getContentAsString(),
+                TaskDto.class
+        );
+
+        assertNotNull(updatedTask);
+        assertEquals(task.getId(), updatedTask.getId());
+        assertEquals(updateRequest.getName(), updatedTask.getName());
+        assertEquals(updateRequest.getDescription(), updatedTask.getDescription());
+        assertEquals(updateRequest.getStartDatetime().truncatedTo(ChronoUnit.SECONDS), updatedTask.getStartDatetime());
+        assertTrue(updatedTask.isCompleted());
+    }
+
+    @Test
+    @Order(22)
     public void testDeleteTaskUnauthenticated() throws Exception {
         Task task = Task.builder()
                 .name(faker.lorem().word())
@@ -483,7 +610,7 @@ public class TaskControllerUnitTests extends BaseTest {
     }
 
     @Test
-    @Order(19)
+    @Order(23)
     public void testDeleteTaskNotFound() throws Exception {
         long nonExistentTaskId = 999L;
 
@@ -497,7 +624,7 @@ public class TaskControllerUnitTests extends BaseTest {
     }
 
     @Test
-    @Order(20)
+    @Order(24)
     public void testDeleteTaskForbidden() throws Exception {
         User otherUser = User.builder()
                 .name(faker.name().fullName())
@@ -527,7 +654,7 @@ public class TaskControllerUnitTests extends BaseTest {
     }
 
     @Test
-    @Order(21)
+    @Order(25)
     public void testDeleteTask() throws Exception {
         Task task = Task.builder()
                 .name(faker.lorem().word())

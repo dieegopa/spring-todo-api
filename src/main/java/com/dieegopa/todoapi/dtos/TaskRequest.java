@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class CreateTaskRequest {
+public class TaskRequest {
 
     @NotNull(message = "Name cannot be null")
     @NotBlank(message = "Name cannot be blank")

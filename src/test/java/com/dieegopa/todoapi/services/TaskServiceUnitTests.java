@@ -1,7 +1,7 @@
 package com.dieegopa.todoapi.services;
 
 import com.dieegopa.todoapi.BaseTest;
-import com.dieegopa.todoapi.dtos.CreateTaskRequest;
+import com.dieegopa.todoapi.dtos.TaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
 import com.dieegopa.todoapi.entities.Task;
 import com.dieegopa.todoapi.entities.User;
@@ -170,7 +170,7 @@ public class TaskServiceUnitTests extends BaseTest {
 
     @Test
     public void testCreateTask() {
-        CreateTaskRequest newTask = CreateTaskRequest.builder()
+        TaskRequest newTask = TaskRequest.builder()
                 .name(faker.lorem().word())
                 .description(faker.lorem().paragraph())
                 .startDatetime(LocalDateTime.now())
@@ -184,6 +184,34 @@ public class TaskServiceUnitTests extends BaseTest {
         assertEquals(newTask.getDescription(), createdTask.getDescription());
         assertEquals(newTask.getStartDatetime(), createdTask.getStartDatetime());
         assertFalse(createdTask.isCompleted());
+    }
+
+    @Test
+    public void testUpdateTask() {
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(user)
+                .build();
+
+        taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .completed(true)
+                .build();
+
+        TaskDto updatedTask = taskService.updateTask(task.getId(), updateRequest);
+
+        assertNotNull(updatedTask);
+        assertEquals(updateRequest.getName(), updatedTask.getName());
+        assertEquals(updateRequest.getDescription(), updatedTask.getDescription());
+        assertEquals(updateRequest.getStartDatetime(), updatedTask.getStartDatetime());
+        assertTrue(updatedTask.isCompleted());
     }
 
     @Test
