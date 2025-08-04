@@ -30,6 +30,7 @@ public class TaskServiceUnitTests extends BaseTest {
 
     @Autowired
     private ITaskService taskService;
+
     @Autowired
     private UserRepository userRepository;
 

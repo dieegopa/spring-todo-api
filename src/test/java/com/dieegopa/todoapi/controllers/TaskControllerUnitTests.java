@@ -38,8 +38,10 @@ public class TaskControllerUnitTests extends BaseTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private TaskRepository taskRepository;
+
     @Autowired
     private UserRepository userRepository;
 
