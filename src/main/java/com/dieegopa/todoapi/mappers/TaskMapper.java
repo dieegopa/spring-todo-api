@@ -6,13 +6,23 @@ import com.dieegopa.todoapi.entities.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
     TaskDto toDto(Task task);
 
+    @Mappings({
+        @Mapping(target = "id", ignore = true),
+        @Mapping(target = "user", ignore = true),
+        @Mapping(target = "createdAt", ignore = true)
+    })
     Task toEntity(TaskRequest request);
 
-    @Mapping(target = "id", ignore = true)
+    @Mappings({
+        @Mapping(target = "id", ignore = true),
+        @Mapping(target = "user", ignore = true),
+        @Mapping(target = "createdAt", ignore = true)
+    })
     void updateEntityFromRequest(TaskRequest request, @MappingTarget Task task);
 }
