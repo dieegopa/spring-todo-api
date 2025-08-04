@@ -5,6 +5,10 @@ import com.dieegopa.todoapi.dtos.TaskRequest;
 import com.dieegopa.todoapi.services.task.ITaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,6 +25,14 @@ public class TaskController {
     @GetMapping
     @Operation(summary = "Get all tasks",
             description = "Retrieves a list of all tasks by the authenticated user."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of tasks retrieved successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))
+            )
     )
     public Iterable<TaskDto> getAllTasks() {
         return taskService.getAllTasks();
@@ -41,6 +53,14 @@ public class TaskController {
     @Operation(summary = "Get completed tasks",
             description = "Retrieves a list of completed tasks for the authenticated user."
     )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of completed tasks retrieved successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))
+            )
+    )
     public Iterable<TaskDto> getCompletedTasks() {
         return taskService.getCompletedTasks();
     }
@@ -48,6 +68,14 @@ public class TaskController {
     @GetMapping("/pending")
     @Operation(summary = "Get pending tasks",
             description = "Retrieves a list of pending tasks for the authenticated user."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "List of pending tasks retrieved successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))
+            )
     )
     public Iterable<TaskDto> getPendingTasks() {
         return taskService.getPendingTasks();
