@@ -3,10 +3,12 @@ package com.dieegopa.todoapi.services;
 import com.dieegopa.todoapi.BaseTest;
 import com.dieegopa.todoapi.dtos.TaskRequest;
 import com.dieegopa.todoapi.dtos.TaskDto;
+import com.dieegopa.todoapi.entities.Tag;
 import com.dieegopa.todoapi.entities.Task;
 import com.dieegopa.todoapi.entities.User;
 import com.dieegopa.todoapi.exceptions.ForbiddenAccessException;
 import com.dieegopa.todoapi.exceptions.TaskNotFoundException;
+import com.dieegopa.todoapi.repositories.TagRepository;
 import com.dieegopa.todoapi.repositories.TaskRepository;
 import com.dieegopa.todoapi.repositories.UserRepository;
 import com.dieegopa.todoapi.services.task.ITaskService;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +37,9 @@ public class TaskServiceUnitTests extends BaseTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     @BeforeEach
     public void setup() {
         mockSecurityContext();
@@ -47,6 +53,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);
@@ -70,6 +77,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);
@@ -105,6 +113,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(otherUser)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);
@@ -121,6 +130,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(true)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         Task task2 = Task.builder()
@@ -129,6 +139,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task1);
@@ -149,6 +160,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         Task task2 = Task.builder()
@@ -157,6 +169,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(true)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task1);
@@ -176,6 +189,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .description(faker.lorem().paragraph())
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
+                .tags(new HashSet<>())
                 .build();
 
         TaskDto createdTask = taskService.createTask(newTask);
@@ -188,6 +202,32 @@ public class TaskServiceUnitTests extends BaseTest {
     }
 
     @Test
+    public void testCreateTaskWithTags() {
+        Tag tag1 = new Tag();
+        tag1.setName(faker.lorem().word());
+        tag1.setUser(user);
+        tagRepository.save(tag1);
+
+        TaskRequest newTask = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .tags(new HashSet<>(List.of(tag1.getId())))
+                .build();
+
+        TaskDto createdTask = taskService.createTask(newTask);
+
+        assertNotNull(createdTask);
+        assertEquals(newTask.getName(), createdTask.getName());
+        assertEquals(newTask.getDescription(), createdTask.getDescription());
+        assertEquals(newTask.getStartDatetime(), createdTask.getStartDatetime());
+        assertFalse(createdTask.isCompleted());
+        assertFalse(createdTask.getTags().isEmpty());
+        assertTrue(createdTask.getTags().stream().anyMatch(tag -> tag.getId().equals(tag1.getId())));
+    }
+
+    @Test
     public void testUpdateTask() {
         Task task = Task.builder()
                 .name(faker.lorem().word())
@@ -195,6 +235,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);
@@ -204,6 +245,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .description(faker.lorem().paragraph())
                 .startDatetime(LocalDateTime.now().plusDays(1))
                 .completed(true)
+                .tags(new HashSet<>())
                 .build();
 
         TaskDto updatedTask = taskService.updateTask(task.getId(), updateRequest);
@@ -216,6 +258,86 @@ public class TaskServiceUnitTests extends BaseTest {
     }
 
     @Test
+    public void testUpdateTaskWithTags() {
+        Tag tag1 = new Tag();
+        tag1.setName(faker.lorem().word());
+        tag1.setUser(user);
+        tagRepository.save(tag1);
+
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(user)
+                .tags(new HashSet<>())
+                .build();
+
+        taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .completed(true)
+                .tags(new HashSet<>(List.of(tag1.getId())))
+                .build();
+
+        TaskDto updatedTask = taskService.updateTask(task.getId(), updateRequest);
+
+        assertNotNull(updatedTask);
+        assertEquals(updateRequest.getName(), updatedTask.getName());
+        assertEquals(updateRequest.getDescription(), updatedTask.getDescription());
+        assertEquals(updateRequest.getStartDatetime(), updatedTask.getStartDatetime());
+        assertTrue(updatedTask.isCompleted());
+        assertFalse(updatedTask.getTags().isEmpty());
+        assertTrue(updatedTask.getTags().stream().anyMatch(tag -> tag.getId().equals(tag1.getId())));
+    }
+
+    @Test
+    public void testUpdateTaskWithTagsRemovesOldOnes(){
+        Tag tag1 = new Tag();
+        tag1.setName(faker.lorem().word());
+        tag1.setUser(user);
+        tagRepository.save(tag1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(faker.lorem().word());
+        tag2.setUser(user);
+        tagRepository.save(tag2);
+
+        Task task = Task.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now())
+                .completed(false)
+                .user(user)
+                .tags(new HashSet<>(List.of(tag1)))
+                .build();
+
+        taskRepository.save(task);
+
+        TaskRequest updateRequest = TaskRequest.builder()
+                .name(faker.lorem().word())
+                .description(faker.lorem().paragraph())
+                .startDatetime(LocalDateTime.now().plusDays(1))
+                .completed(true)
+                .tags(new HashSet<>(List.of(tag2.getId())))
+                .build();
+
+        TaskDto updatedTask = taskService.updateTask(task.getId(), updateRequest);
+
+        assertNotNull(updatedTask);
+        assertEquals(updateRequest.getName(), updatedTask.getName());
+        assertEquals(updateRequest.getDescription(), updatedTask.getDescription());
+        assertEquals(updateRequest.getStartDatetime(), updatedTask.getStartDatetime());
+        assertTrue(updatedTask.isCompleted());
+        assertFalse(updatedTask.getTags().isEmpty());
+        assertTrue(updatedTask.getTags().stream().anyMatch(tag -> tag.getId().equals(tag2.getId())));
+        assertFalse(updatedTask.getTags().stream().anyMatch(tag -> tag.getId().equals(tag1.getId())));
+    }
+
+    @Test
     public void testDeleteTask() {
         Task task = Task.builder()
                 .name(faker.lorem().word())
@@ -223,6 +345,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(user)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);
@@ -248,6 +371,7 @@ public class TaskServiceUnitTests extends BaseTest {
                 .startDatetime(LocalDateTime.now())
                 .completed(false)
                 .user(otherUser)
+                .tags(new HashSet<>())
                 .build();
 
         taskRepository.save(task);

@@ -85,6 +85,14 @@ public class TaskController {
     @Operation(summary = "Create a new task",
             description = "Creates a new task for the authenticated user."
     )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Details of the task to create, the list of tags show be the IDs of the tags, it can be empty",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = TaskRequest.class)
+            )
+    )
     public TaskDto createTask(@Valid @RequestBody TaskRequest request) {
         return taskService.createTask(request);
     }
@@ -92,6 +100,15 @@ public class TaskController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update a task",
             description = "Updates an existing task by its ID for the authenticated user."
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Details of the task to update, the list of tags show be the IDs of the tags, it can be empty, " +
+                    "this sets the tags to the current list so if you want to conserve the current tags you should include them in the request",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = TaskRequest.class)
+            )
     )
     public TaskDto updateTask(
             @Parameter(description = "ID of the task to update", required = true)

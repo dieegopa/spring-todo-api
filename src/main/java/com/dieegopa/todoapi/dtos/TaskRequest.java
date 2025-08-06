@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -28,4 +29,6 @@ public class TaskRequest {
     private LocalDateTime startDatetime;
 
     private LocalDateTime endDatetime;
+
+    private Set<Long> tags;
 }

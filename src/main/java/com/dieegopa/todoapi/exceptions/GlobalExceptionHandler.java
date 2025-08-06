@@ -77,4 +77,11 @@ public class GlobalExceptionHandler {
                 new ErrorDto(e.getMessage())
         );
     }
+
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ResponseEntity<ErrorDto> handleUnprocessableEntity(UnprocessableEntityException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                new ErrorDto(e.getMessage())
+        );
+    }
 }

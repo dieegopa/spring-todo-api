@@ -13,16 +13,18 @@ public interface TaskMapper {
     TaskDto toDto(Task task);
 
     @Mappings({
-        @Mapping(target = "id", ignore = true),
-        @Mapping(target = "user", ignore = true),
-        @Mapping(target = "createdAt", ignore = true)
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "user", ignore = true),
+            @Mapping(target = "createdAt", ignore = true),
+            @Mapping(target = "tags", ignore = true)
     })
     Task toEntity(TaskRequest request);
 
     @Mappings({
-        @Mapping(target = "id", ignore = true),
-        @Mapping(target = "user", ignore = true),
-        @Mapping(target = "createdAt", ignore = true)
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "user", ignore = true),
+            @Mapping(target = "createdAt", ignore = true),
+            @Mapping(target = "tags", ignore = true)
     })
     void updateEntityFromRequest(TaskRequest request, @MappingTarget Task task);
 }
