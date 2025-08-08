@@ -25,8 +25,8 @@ Este proyecto es una API RESTful para gestionar tareas (ToDo), construida con Sp
 ### Instalación
 
 ```bash
-git clone https://github.com/dieegopa/todo-api.git
-cd todo-api
+git clone https://github.com/dieegopa/spring-todo-api.git
+cd spring-todo-api
 ./gradlew build
 ./gradlew bootRun
 ```
