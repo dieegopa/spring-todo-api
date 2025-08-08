@@ -2,7 +2,7 @@
 
 # Spring Boot REST API - ToDo
 
-Este proyecto es una API RESTful construida con Spring Boot, siguiendo las mejores prácticas aprendidas en el curso [Spring Boot: Building APIs](https://codewithmosh.com/p/spring-boot-building-apis) de Code with Mosh.
+Este proyecto es una API RESTful para gestionar tareas (ToDo), construida con Spring Boot y siguiendo buenas prácticas de desarrollo.
 
 ## 🧰 Tecnologías
 
