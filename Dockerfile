@@ -11,6 +11,9 @@ COPY gradle ./gradle
 # Create Gradle cache directory and set correct permissions
 RUN mkdir -p /home/gradle/.gradle && chown -R gradle:gradle /home/gradle
 
+RUN mkdir -p /app && chown -R gradle:gradle /app
+RUN mkdir -p /app/gradle/.gradle && chown -R gradle:gradle /home/gradle
+
 # Switch to gradle user (prevents permission issues)
 USER gradle
 
