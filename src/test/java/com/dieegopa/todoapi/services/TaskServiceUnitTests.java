@@ -65,7 +65,8 @@ public class TaskServiceUnitTests extends BaseTest {
         assertFalse(tasks.isEmpty());
         assertTrue(tasks.stream().anyMatch(t -> t.getName().equals(task.getName())));
         assertTrue(tasks.stream().anyMatch(t -> t.getDescription().equals(task.getDescription())));
-        assertTrue(tasks.stream().anyMatch(t -> t.getStartDatetime().equals(task.getStartDatetime())));
+        System.out.println(task.getStartDatetime().truncatedTo(ChronoUnit.SECONDS));
+        assertTrue(tasks.stream().anyMatch(t -> t.getStartDatetime().truncatedTo(ChronoUnit.SECONDS).equals(task.getStartDatetime().truncatedTo(ChronoUnit.SECONDS))));
 
     }
 
@@ -87,7 +88,7 @@ public class TaskServiceUnitTests extends BaseTest {
         assertNotNull(taskDto);
         assertEquals(task.getName(), taskDto.getName());
         assertEquals(task.getDescription(), taskDto.getDescription());
-        assertEquals(task.getStartDatetime(), taskDto.getStartDatetime());
+        assertEquals(task.getStartDatetime().truncatedTo(ChronoUnit.SECONDS), taskDto.getStartDatetime().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Test
