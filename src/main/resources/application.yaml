@@ -7,3 +7,5 @@ spring:
     refreshTokenExpiration: 86400 # 24 hours
   profiles:
     active: dev
+server:
+  port: ${PORT:8080}
