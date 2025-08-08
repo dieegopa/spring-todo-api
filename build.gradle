@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.mysql:mysql-connector-j'
     implementation 'org.flywaydb:flyway-core:11.10.4'
     implementation 'org.flywaydb:flyway-mysql:11.10.4'
+    implementation 'org.flywaydb:flyway-database-postgresql:11.10.5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.mockito:mockito-core'
