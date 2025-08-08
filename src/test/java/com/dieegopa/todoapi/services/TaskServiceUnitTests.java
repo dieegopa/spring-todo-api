@@ -155,6 +155,9 @@ public class TaskServiceUnitTests extends BaseTest {
 
     @Test
     public void testGetPendingTasks() {
+
+        taskRepository.deleteAll();
+
         Task task1 = Task.builder()
                 .name(faker.lorem().word())
                 .description(faker.lorem().paragraph())
